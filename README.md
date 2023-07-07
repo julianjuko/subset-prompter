@@ -56,10 +56,10 @@ For instance, given the following JSON object:
 A data query `shipment..items..name` will return:
 
 ```
-"Gel Blaster"
-"Jetpack"
-"Pincushion"
-"Pogo Stick"
+Gel Blaster
+Jetpack
+Pincushion
+Pogo Stick
 ```
 
 ## Output
