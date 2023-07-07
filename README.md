@@ -44,7 +44,7 @@ For instance, given the following JSON object:
         },
         "125256": {
           "name": "Pogo Stick"
-        },
+        }
       }
     }
   ]
