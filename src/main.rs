@@ -83,7 +83,7 @@ fn main() {
     println!(
         "\nTime elapsed is: {} minutes {:.2} seconds",
         duration.as_secs() / 60,
-        duration.as_secs() as f64 % 60.0
+        duration.as_secs_f64() % 60.0
     );
 }
 
