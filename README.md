@@ -42,7 +42,7 @@ For instance, given the following JSON object:
         "125252": {
           "name": "Gel Blaster"
         },
-        "125253": {
+        "125256": {
           "name": "Pogo Stick"
         },
       }
