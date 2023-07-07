@@ -1,7 +1,9 @@
 use csv;
+use rayon::prelude::*;
 use serde_json::{StreamDeserializer, Value};
 use std::collections::HashSet;
-use std::io::{self, Write};
+use std::io::{self, stdout, Write};
+use std::sync::{Arc, Mutex};
 use std::time::Instant;
 
 fn main() {
@@ -23,8 +25,6 @@ fn main() {
         .from_path(filepath)
         .unwrap();
 
-    let mut result_set: HashSet<String> = HashSet::new();
-
     // Determine which column contains the JSON blob.
     let blob_column_index = reader
         .headers()
@@ -33,8 +33,14 @@ fn main() {
         .position(|header| header.contains("blob"))
         .expect("Could not find a column named 'blob'");
 
-    // Iterate over each record.
-    for (i, result) in reader.records().enumerate() {
+    // Use Arc (Atomic Reference Counter) and Mutex (Mutual Exclusion) for thread-safe shared state.
+    let result_set: Arc<Mutex<HashSet<String>>> = Arc::new(Mutex::new(HashSet::new()));
+
+    // Create a counter for processed blobs.
+    let processed_blobs_counter: Arc<Mutex<usize>> = Arc::new(Mutex::new(0));
+
+    // Convert records into a parallel iterator and process them in parallel.
+    reader.records().par_bridge().for_each(|result| {
         // Ensure no error occurred.
         let record = result.unwrap();
 
@@ -45,28 +51,30 @@ fn main() {
         // Navigate into the blob based on provided data path.
         for value in stream_deserializer {
             match value {
-                Ok(v) => navigate_blob(&v, &data_path, &mut result_set),
+                Ok(v) => navigate_blob(&v, &data_path, &result_set),
                 Err(_) => continue,
             }
-
-            // Update the message of the progress bar after each blob processed
-            print!(
-                "\rBlobs processed: {}. Unique values collected: {}",
-                i + 1,
-                result_set.len()
-            );
-            io::stdout().flush().unwrap(); // Flush stdout to update on same line
         }
-    }
 
-    let mut result_vec: Vec<_> = result_set.into_iter().collect();
+        // Increase processed blobs counter and print progress.
+        *processed_blobs_counter.lock().unwrap() += 1;
+        print!(
+            "\rBlobs processed: {}. Unique values collected: {}",
+            *processed_blobs_counter.lock().unwrap(),
+            result_set.lock().unwrap().len()
+        );
+        stdout().flush().unwrap(); // Flush stdout to update on same line
+    });
+
+    let binding = result_set.lock().unwrap();
+    let mut result_vec: Vec<_> = binding.iter().collect();
 
     result_vec.sort();
 
     println!("\nDone.");
-    println!("\nSorted unique values:\n");
+    println!("\nSorted unique values:");
 
-    for value in result_vec.iter() {
+    for value in result_vec {
         println!("{}", value);
     }
 
@@ -79,7 +87,7 @@ fn main() {
     );
 }
 
-fn navigate_blob(blob: &Value, data_path: &[&str], set: &mut HashSet<String>) {
+fn navigate_blob(blob: &Value, data_path: &[&str], set_arc: &Arc<Mutex<HashSet<String>>>) {
     if data_path.is_empty() {
         return;
     }
@@ -89,23 +97,23 @@ fn navigate_blob(blob: &Value, data_path: &[&str], set: &mut HashSet<String>) {
             if data_path[0] == "" {
                 // This is an abstraction level.
                 for (_, value) in map.iter() {
-                    navigate_blob(value, &data_path[1..], set);
+                    navigate_blob(value, &data_path[1..], set_arc);
                 }
             } else if let Some(value) = map.get(data_path[0]) {
                 if data_path.len() == 1 {
                     // We've reached the last item in our data path
                     if let Value::String(s) = value {
-                        set.insert(s.clone());
+                        set_arc.lock().unwrap().insert(s.clone());
                     }
                 } else {
                     // Continue navigating deeper into the blob
-                    navigate_blob(value, &data_path[1..], set);
+                    navigate_blob(value, &data_path[1..], set_arc);
                 }
             }
         }
         Value::Array(arr) => {
             for value in arr.iter() {
-                navigate_blob(value, &data_path[..], set);
+                navigate_blob(value, &data_path[..], set_arc);
             }
         }
         _ => {}
