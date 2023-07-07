@@ -66,17 +66,22 @@ fn main() {
         stdout().flush().unwrap(); // Flush stdout to update on same line
     });
 
-    println!("\nDone.");
+    let binding = result_set.lock().unwrap();
+    let mut result_vec: Vec<_> = binding.iter().collect();
 
-    // Print out all unique values.
-    for value in (*result_set.lock().unwrap()).iter() {
+    result_vec.sort();
+
+    println!("\nDone.");
+    println!("\nSorted unique values:");
+
+    for value in result_vec {
         println!("{}", value);
     }
 
     let duration = start_time.elapsed();
 
     println!(
-        "Time elapsed is: {} minutes {:.2} seconds",
+        "\nTime elapsed is: {} minutes {:.2} seconds",
         duration.as_secs() / 60,
         duration.as_secs() as f64 % 60.0
     );
