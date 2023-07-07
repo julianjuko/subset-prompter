@@ -5,7 +5,7 @@ This program is designed to parse through large JSON blobs stored in a CSV file 
 
 ## How to Use
 
-Follow the steps below to use this program:
+Run the program with `cargo build && cargo run`. It will then ask you for the following:
 
 1. **Filepath Input**: The program will first prompt you for a filepath relative to the current working directory. This filepath should point to a CSV file containing one column of large serialized JSON blobs.
 
@@ -16,7 +16,7 @@ Follow the steps below to use this program:
 The syntax for specifying the data path is important:
 
 - A single period `.` indicates a direct parent-child relationship between keys.
-- Two periods `..` signify an abstraction level which could be either an array or an object (similar to `Record<string, object>` type in TypeScript). In such cases, all corresponding values are consolidated at that level as part of the bottom-level subset.
+- Two or more periods such as `..` or `...` signify one or more "blank" abstraction levels between the keys which could be either an array or an object (similar to `Record<string, object>` type in TypeScript). In such cases, all corresponding values are consolidated at each abstraction level as part of the bottom-level subset.
 
 For instance, given the following JSON object:
 
@@ -61,4 +61,4 @@ A data query `id..items..name` will return:
 
 ## Output 
 
-The resulting subset of unique values based on your specified data path will be printed directly to your terminal.
+The resulting subset of unique values based on your specified data path will be printed directly to your terminal. Each period in between keys denotes an abstraction level that the program consolidates during parsing before returning results, allowing you to navigate multi-layered JSON structures efficiently.
