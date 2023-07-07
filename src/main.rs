@@ -2,6 +2,7 @@ use csv;
 use serde_json::{StreamDeserializer, Value};
 use std::collections::HashSet;
 use std::io::{self, Write};
+use std::time::Instant;
 
 fn main() {
     let mut input = String::new();
@@ -14,6 +15,7 @@ fn main() {
     input.clear();
     io::stdin().read_line(&mut input).unwrap();
 
+    let start_time = Instant::now();
     let data_path: Vec<&str> = input.trim().split(&['.'][..]).collect();
 
     let mut reader = csv::ReaderBuilder::new()
@@ -64,6 +66,14 @@ fn main() {
     for value in result_set.iter() {
         println!("{}", value);
     }
+
+    let duration = start_time.elapsed();
+
+    println!(
+        "Time elapsed is: {} minutes {:.2} seconds",
+        duration.as_secs() / 60,
+        duration.as_secs() as f64 % 60.0
+    );
 }
 
 fn navigate_blob(blob: &Value, data_path: &[&str], set: &mut HashSet<String>) {
