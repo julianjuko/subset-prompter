@@ -2,7 +2,7 @@
 
 Query unique subsets of large datasets - quickly.
 
-This program is designed to parse through large JSON blobs stored in a CSV file and return unique values based on a user-specified data path. It is built with Rust, ensuring it performs this task in a memory-efficient and fast manner.
+This program is designed to parse through large JSON blobs stored in a CSV file and return unique values based on a user-specified data path. It is built with Rust, and uses multi-threading to perform this task in a memory-efficient and fast manner; even on CSV files that are several GB in size.
 
 ## How to Use
 
@@ -17,8 +17,8 @@ Run the program with `cargo build && cargo run`. It will then ask you for the fo
 The syntax for specifying the data path is important:
 
 - A single period `.` indicates a direct parent-child relationship between keys.
-- Two or more periods such as `..` or `...` signify one or more "blank" abstraction levels between the keys which could be either an array or an object (similar to `Record<string, object>` type in TypeScript). In such cases, all corresponding values are flattened and then consolidated at each abstraction level as part of the returned subset.
-- It is probably simpler to think of an imaginary between consecutive periods as a "blank" key to denote an abstraction level for flattening, such that `key1...key2` is actually treated as `key1.<flatten>.<flatten>.key2`
+- Two or more periods such as `..` or `...` signify that there is one or more "collection" levels between the keys, which could be either an *array*, or an *object* / *map*. In such cases, all corresponding contents of this level are flattened, and the cursor passes through them to the next level.
+- It is probably simpler to think of an "imaginary key" between consecutive periods `.` to denote a collection level for flattening, such that `key1...key2` is actually treated as `key1.<collection>.<collection>.key2`
 
 For instance, given the following JSON object:
 
