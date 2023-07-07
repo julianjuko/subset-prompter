@@ -1,6 +1,6 @@
 # subset-prompter
 
-Query unique subsets of large datasets - quickly.
+Reduce large datasets down to unique subsets - quickly.
 
 This program is designed to parse through large JSON blobs stored in a CSV file and return unique values based on a user-specified data path. It is built with Rust, and uses multi-threading to perform this task in a memory-efficient and fast manner; even on CSV files that are several GB in size.
 
@@ -53,7 +53,7 @@ For instance, given the following JSON object:
 }
 ```
 
-A data query `shipment..items..name` will return:
+A supplied data path `shipment..items..name` will return:
 
 ```
 Gel Blaster
