@@ -64,7 +64,7 @@ fn main() {
     result_vec.sort();
 
     println!("\nDone.");
-    println!("\nSorted unique values:");
+    println!("\nSorted unique values:\n");
 
     for value in result_vec.iter() {
         println!("{}", value);
@@ -73,9 +73,9 @@ fn main() {
     let duration = start_time.elapsed();
 
     println!(
-        "Time elapsed is: {} minutes {:.2} seconds",
+        "\nTime elapsed is: {} minutes {:.2} seconds",
         duration.as_secs() / 60,
-        duration.as_secs() as f64 % 60.0
+        duration.as_secs_f64() % 60.0
     );
 }
 
