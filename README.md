@@ -1,4 +1,5 @@
 # subset-prompter
+
 Query unique subsets of large datasets - quickly.
 
 This program is designed to parse through large JSON blobs stored in a CSV file and return unique values based on a user-specified data path. It is built with Rust, ensuring it performs this task in a memory-efficient and fast manner.
@@ -16,7 +17,8 @@ Run the program with `cargo build && cargo run`. It will then ask you for the fo
 The syntax for specifying the data path is important:
 
 - A single period `.` indicates a direct parent-child relationship between keys.
-- Two or more periods such as `..` or `...` signify one or more "blank" abstraction levels between the keys which could be either an array or an object (similar to `Record<string, object>` type in TypeScript). In such cases, all corresponding values are consolidated at each abstraction level as part of the bottom-level subset.
+- Two or more periods such as `..` or `...` signify one or more "blank" abstraction levels between the keys which could be either an array or an object (similar to `Record<string, object>` type in TypeScript). In such cases, all corresponding values are flattened and then consolidated at each abstraction level as part of the returned subset.
+- It is probably simpler to think of an imaginary between consecutive periods as a "blank" key to denote an abstraction level for flattening, such that `key1...key2` is actually treated as `key1.<flatten>.<flatten>.key2`
 
 For instance, given the following JSON object:
 
@@ -50,6 +52,7 @@ For instance, given the following JSON object:
   ]
 }
 ```
+
 A data query `shipment..items..name` will return:
 
 ```
@@ -59,6 +62,11 @@ A data query `shipment..items..name` will return:
 "Pogo Stick"
 ```
 
-## Output 
+## Output
 
-The resulting subset of unique values based on your specified data path will be printed directly to your terminal. Each period in between keys denotes an abstraction level that the program consolidates during parsing before returning results, allowing you to navigate multi-layered JSON structures efficiently.
+The resulting subset of unique values based on your specified data path will be printed directly to your terminal. Knowing the expected shape of the data you are traversing will allow you to return sets of unique values from multi-layered JSON structures efficiently.
+
+## Cases that have not been handled
+
+- Keys which have a period `.` in them; these will be parsed as separate keys in the structure.
+- Paths which end with a period `.`
