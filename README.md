@@ -2,7 +2,7 @@
 
 This program is designed to parse through large JSON blobs stored in a CSV file and return unique values based on a user-specified data path. It is built with Rust, and uses multi-threading to perform this task in a memory-efficient and fast manner; even on CSV files that are several GB in size.
 
-## How to Use
+## How to use
 
 Run the program with `cargo build && cargo run`. It will then ask you for the following:
 
