@@ -59,11 +59,14 @@ fn main() {
         }
     }
 
-    // Finish with the progress bar
-    println!("\nDone.");
+    let mut result_vec: Vec<_> = result_set.into_iter().collect();
 
-    // Print out all unique values.
-    for value in result_set.iter() {
+    result_vec.sort();
+
+    println!("\nDone.");
+    println!("\nSorted unique values:");
+
+    for value in result_vec.iter() {
         println!("{}", value);
     }
 
