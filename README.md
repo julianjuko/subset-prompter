@@ -23,7 +23,7 @@ For instance, given the following JSON object:
 ```json
 {
   "id": 2,
-  "cargo": [
+  "shipment": [
     {
       "items": {
         "125252": {
@@ -50,7 +50,7 @@ For instance, given the following JSON object:
   ]
 }
 ```
-A data query `id..items..name` will return:
+A data query `shipment..items..name` will return:
 
 ```
 "Gel Blaster"
