@@ -18,7 +18,7 @@ The syntax for specifying the data path is important:
 
 - A single period `.` indicates a direct parent-child relationship between keys.
 - Two or more periods such as `..` or `...` signify that there is one or more "collection" levels between the keys, which could be either an *array*, or an *object* / *map*. In such cases, all corresponding contents of this level are flattened, and the cursor passes through them to the next level.
-- It is probably simpler to think of an "imaginary key" between consecutive periods `.` to denote a collection level for flattening, such that `key1...key2` is actually treated as `key1.<collection>.<collection>.key2`
+- It is probably simpler to think of an "imaginary key" between consecutive periods to denote a collection level for flattening, such that `key1...key2` is actually treated as `key1.<collection>.<collection>.key2`
 
 For instance, given the following JSON object:
 
