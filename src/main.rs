@@ -102,8 +102,16 @@ fn navigate_blob(blob: &Value, data_path: &[&str], set_arc: &Arc<Mutex<HashSet<S
             } else if let Some(value) = map.get(data_path[0]) {
                 if data_path.len() == 1 {
                     // We've reached the last item in our data path
-                    if let Value::String(s) = value {
-                        set_arc.lock().unwrap().insert(s.clone());
+                    match value {
+                        Value::String(s) => {
+                            let mut result = s.clone();
+                            if let Some(Value::String(value_str)) = map.get("value") {
+                                result.push_str(" ~ ");
+                                result.push_str(value_str);
+                            }
+                            set_arc.lock().unwrap().insert(result);
+                        }
+                        _ => {}
                     }
                 } else {
                     // Continue navigating deeper into the blob
