@@ -6,7 +6,7 @@ This program is designed to parse through large JSON blobs stored in a CSV file 
 
 Run the program with `cargo build && cargo run`. It will then ask you for the following:
 
-1. **Filepath Input**: The program will first prompt you for a filepath relative to the current working directory. This filepath should point to a CSV file containing one column of large serialized JSON blobs. This column should be called `blob`.
+1. **Filepath Input**: The program will first prompt you for a filepath relative to the current working directory. This filepath should point to a CSV file containing (among potentially multiple columns) one column of large serialized JSON blobs. This column should be called `blob`.
 
 2. **Data Path Input**: Next, you will be asked for a data path which serves as an instruction to navigate through the nested JSON data structure. For example: `key.childKey..childKey2.childKey3`.
 
